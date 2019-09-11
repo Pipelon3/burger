@@ -1,33 +1,32 @@
-var connection = require("./connections.js");
+var connection = require("./connection.js");
+
 
 var orm = {
-  selectWhere: function(tableInput, colToSearch, valOfCol) {
-    var queryString = "SELECT * FROM burger_db WHERE ?? = ?";
-    connection.query(queryString, [tableInput, colToSearch, valOfCol], function(err, result) {
-      if (err) throw err;
-      console.log(result);
-    });
+  selectWhere: function(tableInput, cb) {
+      var queryString = "SELECT * FROM ??";
+      connection.query(queryString, [tableInput], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+          cb(result);
+      });
   },
-  selectAndOrder: function(whatToSelect, table, orderCol) {
-    var queryString = "SELECT ?? FROM ?? ORDER BY ?? DESC";
-    console.log(queryString);
-    connection.query(queryString, [whatToSelect, table, orderCol], function(err, result) {
-      if (err) throw err;
-      console.log(result);
-    });
+  createBurger: function(burgers, burger_name, input, cb) {
+      var queryString = "INSERT INTO ?? (??) VALUES (?)";
+      console.log(queryString);
+      connection.query(queryString, [burgers, burger_name, input], function(err, result) {
+          if (err) throw err;
+          console.log(result);
+          cb(result)
+      });
   },
-  findWhoHasMost: function(tableOneCol, tableTwoForeignKey, tableOne, tableTwo) {
-    var queryString =
-      "SELECT ??, COUNT(??) AS count FROM ?? LEFT JOIN ?? ON ??.??= ??.id GROUP BY ?? ORDER BY count DESC LIMIT 1";
-
-    connection.query(
-      queryString,
-      [tableOneCol, tableOneCol, tableOne, tableTwo, tableTwo, tableTwoForeignKey, tableOne, tableOneCol],
-      function(err, result) {
-        if (err) throw err;
-        console.log(result);
-      }
-    );
+  devourBurger: function(burgers, ID, cb) {
+      var queryString = "UPDATE ?? SET devoured = true WHERE id = ?";
+      console.log(queryString);
+      connection.query(queryString, [burgers, ID], function(err, result) {
+          if (err) throw err;
+          console.log(result);
+          cb(result);
+      });
   }
 };
 
