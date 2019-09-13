@@ -1,33 +1,47 @@
-var connection = require("./connection.js");
+var connection = require('./connection');
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  };
+  console.log('connected as id ' + connection.threadId);
+});
 
 
 var orm = {
-  selectWhere: function(tableInput, cb) {
-      var queryString = "SELECT * FROM ??";
-      connection.query(queryString, [tableInput], function (err, result) {
-          if (err) throw err;
-          console.log(result);
-          cb(result);
-      });
+
+  selectAll: function(callback) {
+
+
+    connection.query('SELECT * FROM burgers', function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
+
   },
-  createBurger: function(burgers, burger_name, input, cb) {
-      var queryString = "INSERT INTO ?? (??) VALUES (?)";
-      console.log(queryString);
-      connection.query(queryString, [burgers, burger_name, input], function(err, result) {
-          if (err) throw err;
-          console.log(result);
-          cb(result)
-      });
+
+  insertOne: function(burger_name, callback){
+
+    connection.query('INSERT INTO burgers SET ?', {
+      burger_name: burger_name,
+      devoured: false,
+    }, function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
+
   },
-  devourBurger: function(burgers, ID, cb) {
-      var queryString = "UPDATE ?? SET devoured = true WHERE id = ?";
-      console.log(queryString);
-      connection.query(queryString, [burgers, ID], function(err, result) {
-          if (err) throw err;
-          console.log(result);
-          cb(result);
+
+  updateOne: function(burgerID, callback){
+
+    connection.query('UPDATE burgers SET ? WHERE ?', [{devoured: true}, {id: burgerID}], function (err, result) {
+        if (err) throw err;
+        callback(result);
       });
+
   }
+
 };
 
 module.exports = orm;
